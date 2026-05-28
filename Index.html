@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitácora Julio Ordoñez</title>
+    <link rel="icon" type="image/png" href="recursos/img/itscap.png">
+
+    <style>
+        /* CSS-diseño, configurar en cascada */
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            background-image:url(Recursos/fondo-abstracto-blanco-estilo-patron-hexagonal-concepto-costuras_57082-2436.avif);
+            background-repeat: repeat;
+            background-size: 800px;
+            
+
+        }
+
+        header {
+            padding: 20px;
+            background-color: #054524;
+            color: white;
+        }
+
+        header h1 {
+            margin: 0;
+            text-shadow: 
+                0 0 7px rgba(255, 255, 255, 0.8),
+                0 0 10px #2a5a06,
+                0 0 21px #2a5a06,
+                0 0 42px #2a5a06;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 90%;
+        }
+
+        /* Contenedor flexible para texto e imagen/pdf */
+        .semana {
+            background-color: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 50px;
+            border-left: 5px solid #065a2e;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+            text-align: left;
+            /* Activamos Flexbox */
+            display: flex;
+            align-items: center;
+            gap: 40px; /* Espacio entre columnas */
+        }
+
+        .semana:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(79, 59, 157, 0.12);
+        }
+
+        /* Estilo para el bloque de texto (columna izquierda) */
+        .semana-info {
+            flex: 1;
+        }
+
+        /* Estilo para el bloque de contenido (columna derecha: PDF/Imagen) */
+        .semana-contenido {
+            flex: 1.5; /* El PDF tendrá un poco más de espacio que el texto */
+        }
+
+        .semana h2 {
+            color: #065a2e;
+            font-size: 1.8rem;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .semana h2::before {
+            content: "";
+            width: 5px;
+            height: 25px;
+            background-color: #065a2e;
+            margin-right: 15px;
+            border-radius: 10px;
+        }
+
+        .semana p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+            color: #054a26;
+        }
+
+        .semana img, .semana embed, .semana video {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: #065a2e;
+            color: white;
+        }
+
+        footer img {
+            height: 40px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        footer img:hover {
+            transform: scale(1.15);
+        }
+
+        /* Ajuste para móviles: que se ponga uno abajo del otro si la pantalla es pequeña */
+        @media (max-width: 768px) {
+            .semana {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bitácora segunda y Tercera unidad</h1>
+    </header>
+
+    <main>
+        <article class="semana">
+            <div class="semana-info">
+                <h2>Semana 1: Introducción Arduino</h2>
+                <p>Exploramos la arquitectura del microcontrolador Arduino y su entorno de programación para integrar el software con el control de componentes electrónicos físicos.</p>
+            </div>
+            <div class="semana-contenido">
+                <embed src="recursos/Introducción Arduino.pdf" type="application/pdf" height="400px" />
+            </div>
+        </article>
+
+        <article class="semana">
+            <div class="semana-info">
+                <h2 id="semana-2">Semana 2:</h2>
+                <p>Diseño y refinamiento de la interfaz de usuario mediante CSS avanzado, aplicando efectos de interactividad y sombras dinámicas.</p>
+            </div>
+            <div class="semana-contenido">
+                <video  height="100%" controls>
+                   <source src="recursos/Grabación 2026-05-07 083527.mp4" type="video/mp4">
+                </video>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <span>@katrolote24</span>
+        <img src="https://www.capouilliez.edu.gt/assets/img/logo.png" alt="Logo Colegio">
+    </footer>
+</body>
+</html>
