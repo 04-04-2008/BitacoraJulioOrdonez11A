@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitácora Julio Ordoñez</title>
+    <link rel="icon" type="image/png" href="Img/itscap.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0a1f15;
+            --bg-panel: #132f21;
+            --bg-panel-deep: #0d2618;
+            --line: rgba(232, 247, 232, 0.14);
+            --fern: #3f8a5a;
+            --moss: #2f6b45;
+            --emerald: #4be6a0;
+            --emerald-soft: rgba(75, 230, 160, 0.35);
+            --gold: #e8c25a;
+            --gold-soft: rgba(232, 194, 90, 0.3);
+            --text: #eef7ee;
+            --text-dim: #a3c4ac;
+            --font-display: 'Fraunces', serif;
+            --font-mono: 'Space Mono', monospace;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body, html {
+            min-height: 100%;
+            margin: 0;
+            font-family: var(--font-body);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg);
+            color: var(--text);
+            background-image:
+                radial-gradient(ellipse 480px 340px at 12% 8%, rgba(232, 194, 90, 0.10), transparent 65%),
+                radial-gradient(ellipse 520px 400px at 85% 22%, rgba(75, 230, 160, 0.09), transparent 65%),
+                radial-gradient(ellipse 460px 360px at 20% 68%, rgba(75, 230, 160, 0.07), transparent 65%),
+                radial-gradient(ellipse 520px 420px at 92% 82%, rgba(232, 194, 90, 0.08), transparent 65%);
+            background-attachment: fixed;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ---------- ANIMATED BACKGROUND (fireflies) ---------- */
+        #circuit-bg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .cursor-aura {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 460px;
+            height: 460px;
+            margin-left: -230px;
+            margin-top: -230px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--gold-soft) 0%, var(--emerald-soft) 45%, transparent 72%);
+            filter: blur(10px);
+            mix-blend-mode: screen;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .cursor-aura.is-active { opacity: 1; }
+
+        header, main, footer { position: relative; z-index: 2; }
+
+        /* ---------- HEADER ---------- */
+        header {
+            padding: 46px 24px 42px;
+            text-align: center;
+            border-bottom: 1px solid var(--line);
+            overflow: hidden;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 0 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--emerald);
+            margin: 0;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 5px 12px;
+        }
+
+        .counter {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.06em;
+            color: var(--text-dim);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 5px 12px;
+        }
+
+        .power-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.64rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            background: none;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 5px 12px 5px 6px;
+            cursor: pointer;
+        }
+
+        .power-toggle .switch {
+            width: 26px;
+            height: 14px;
+            border-radius: 999px;
+            background: rgba(232, 247, 232, 0.08);
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .power-toggle .switch::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--text-dim);
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .power-toggle.is-on .switch { background: rgba(232, 194, 90, 0.25); }
+        .power-toggle.is-on .switch::after {
+            transform: translateX(12px);
+            background: var(--gold);
+            box-shadow: 0 0 8px var(--gold);
+        }
+
+        header h1 {
+            margin: 0;
+            font-family: var(--font-display);
+            font-optical-sizing: auto;
+            font-weight: 600;
+            font-style: italic;
+            letter-spacing: -0.01em;
+            font-size: clamp(2rem, 4.4vw, 3.2rem);
+            color: var(--text);
+        }
+
+        header h1 .accent { color: var(--emerald); font-style: normal; }
+
+        .header-sub {
+            margin: 16px auto 0;
+            max-width: 480px;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            color: var(--text-dim);
+        }
+
+        /* ---------- RAIL NAV (climbing vine) ---------- */
+        .railnav {
+            position: fixed;
+            right: 26px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            z-index: 5;
+        }
+
+        .railnav button {
+            width: 10px;
+            height: 10px;
+            border-radius: 0 60% 60% 60%;
+            transform: rotate(45deg);
+            border: 2px solid var(--line);
+            background: var(--bg);
+            padding: 0;
+            cursor: pointer;
+            transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+            position: relative;
+        }
+
+        .railnav button::before {
+            content: attr(data-label);
+            position: absolute;
+            right: 22px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-45deg);
+            font-family: var(--font-mono);
+            font-size: 0.66rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+
+        .railnav button:hover::before,
+        .railnav button:focus-visible::before { opacity: 1; }
+
+        .railnav button:hover,
+        .railnav button:focus-visible { transform: rotate(45deg) scale(1.3); }
+
+        .railnav button.is-active {
+            border-color: var(--emerald);
+            background: var(--emerald);
+            box-shadow: 0 0 10px var(--emerald-soft);
+        }
+
+        @media (max-width: 900px) {
+            .railnav { display: none; }
+        }
+
+        /* ---------- MAIN / TIMELINE ---------- */
+        main {
+            flex: 1;
+            padding: 70px 24px 40px;
+            max-width: 950px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .trace {
+            position: relative;
+            padding-left: 66px;
+        }
+
+        .trace::before {
+            content: "";
+            position: absolute;
+            left: 22px;
+            top: 6px;
+            bottom: 6px;
+            width: 3px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, var(--fern) 0%, var(--moss) 50%, var(--fern) 100%);
+            box-shadow: 0 0 12px rgba(75, 230, 160, 0.18);
+        }
+
+        article.semana {
+            position: relative;
+            background-color: var(--bg-panel);
+            border: 1px solid var(--line);
+            border-radius: 22px 22px 22px 6px;
+            padding: 32px 32px 32px 36px;
+            margin-bottom: 42px;
+            box-shadow: 0 24px 44px -26px rgba(0, 0, 0, 0.65);
+            display: flex;
+            align-items: center;
+            gap: 36px;
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s ease;
+        }
+
+        article.semana.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        article.semana:hover { border-color: var(--emerald); }
+
+        .pad {
+            position: absolute;
+            left: -66px;
+            top: 30px;
+            width: 42px;
+            height: 42px;
+            border-radius: 0 60% 60% 60%;
+            transform: rotate(45deg);
+            background: var(--bg-panel-deep);
+            border: 2px solid var(--fern);
+            box-shadow: 0 0 14px rgba(75, 230, 160, 0.15);
+        }
+
+        .pad span {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(-45deg);
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--fern);
+        }
+
+        article.semana.is-visible .pad {
+            border-color: var(--emerald);
+            box-shadow: 0 0 16px var(--emerald-soft);
+        }
+
+        article.semana.is-visible .pad span { color: var(--emerald); }
+
+        .semana-info { flex: 1; min-width: 0; }
+        .semana-contenido { flex: 1.4; min-width: 0; }
+
+        .semana h2 {
+            font-family: var(--font-display);
+            font-weight: 600;
+            color: var(--text);
+            font-size: 1.35rem;
+            margin: 0 0 12px;
+        }
+
+        .semana p {
+            font-size: 1rem;
+            line-height: 1.65;
+            margin: 0;
+            color: var(--text-dim);
+        }
+
+        /* ---------- MEDIA FRAME (leaf-cut viewport) ---------- */
+        .media-frame {
+            position: relative;
+            border-radius: 18px 18px 18px 4px;
+            padding: 9px;
+            background: var(--bg-panel-deep);
+            border: 1px solid var(--line);
+        }
+
+        .media-frame::before {
+            content: "";
+            position: absolute;
+            top: -8px;
+            right: 14px;
+            width: 16px;
+            height: 16px;
+            background: var(--fern);
+            border-radius: 0 60% 60% 60%;
+            transform: rotate(-20deg);
+            opacity: 0.85;
+        }
+
+        .semana img,
+        .semana embed,
+        .semana video {
+            width: 100%;
+            display: block;
+            border-radius: 12px 12px 12px 2px;
+        }
+
+        .testpoint {
+            position: absolute;
+            top: -14px;
+            right: 34px;
+            font-family: var(--font-mono);
+            font-size: 0.58rem;
+            letter-spacing: 0.04em;
+            color: var(--text-dim);
+            background: var(--bg-panel);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 3px 10px;
+            cursor: pointer;
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .testpoint:hover {
+            color: var(--gold);
+            border-color: var(--gold);
+        }
+
+        /* Ajuste para móviles */
+        @media (max-width: 768px) {
+            main { padding: 50px 14px 20px; }
+            .trace { padding-left: 46px; }
+            .trace::before { left: 15px; }
+            .pad { left: -46px; width: 32px; height: 32px; top: 24px; }
+            .pad span { font-size: 0.58rem; }
+            article.semana {
+                flex-direction: column;
+                padding: 26px 20px 26px 24px;
+                gap: 20px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            article.semana { transition: none; opacity: 1; transform: none; }
+            #circuit-bg, .cursor-aura { display: none; }
+        }
+
+        /* ---------- FOOTER ---------- */
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: var(--bg-panel);
+            border-top: 1px solid var(--line);
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+        }
+
+        footer img {
+            height: 36px;
+            transition: transform 0.3s ease, filter 0.3s ease;
+            cursor: pointer;
+        }
+
+        footer img:hover { transform: scale(1.1); }
+
+        /* ---------- TOAST ---------- */
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 28px;
+            transform: translateX(-50%) translateY(12px);
+            background: var(--bg-panel);
+            border: 1px solid var(--emerald);
+            color: var(--emerald);
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            padding: 8px 16px;
+            border-radius: 999px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 20;
+        }
+
+        .toast.is-shown {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="circuit-bg"></canvas>
+    <div class="cursor-aura" id="cursorAura"></div>
+
+    <nav class="railnav" id="railnav" aria-label="Navegación por semana">
+        <button data-target="semana-1" data-label="S1 · Introducción" aria-label="Ir a semana 1"></button>
+        <button data-target="semana-2" data-label="S2 · Interfaz" aria-label="Ir a semana 2"></button>
+        <button data-target="semana-3" data-label="S3 · Programación" aria-label="Ir a semana 3"></button>
+        <button data-target="semana-4" data-label="S4 · LED / RGB" aria-label="Ir a semana 4"></button>
+        <button data-target="semana-5" data-label="S5 · Ultrasónico" aria-label="Ir a semana 5"></button>
+        <button data-target="semana-6" data-label="S6 · PIR" aria-label="Ir a semana 6"></button>
+        <button data-target="semana-7" data-label="S7 · Suficiencia" aria-label="Ir a semana 7"></button>
+    </nav>
+
+    <header>
+        <div class="status-bar">
+            <p class="eyebrow">Registro de campo — Electrónica</p>
+            <span class="counter" id="counter">HOJA 01 / 07</span>
+            <button class="power-toggle" id="powerToggle" type="button" aria-pressed="false">
+                <span class="switch"></span>
+                Encender luciérnagas
+            </button>
+        </div>
+        <h1>Bitácora <span class="accent">segunda y Tercera unidad</span></h1>
+        <p class="header-sub">Seguimiento semanal del desarrollo con Arduino, de la introducción teórica a la implementación de sensores.</p>
+    </header>
+
+    <main>
+        <div class="trace">
+            <article class="semana">
+                <span class="pad"><span>S1</span></span>
+                <div class="semana-info">
+                    <h2 id="semana-1">Semana 1: Introducción Arduino</h2>
+                    <p>Exploramos la arquitectura del microcontrolador Arduino y su entorno de programación para integrar el software con el control de componentes electrónicos físicos.</p>
+                </div>
+                <div class="semana-contenido">
+                    <div class="media-frame">
+                        <button class="testpoint" data-anchor="semana-1" type="button">copiar enlace</button>
+                        <embed src="IntroduccionArduino.pdf" type="application/pdf" height="400px" />
+                    </div>
+                </div>
+            </article>
+
+            <article class="semana">
+                <span class="pad"><span>S2</span></span>
+                <div class="semana-info">
+                    <h2 id="semana-2">Semana 2:</h2>
+                    <p>Diseño y refinamiento de la interfaz de usuario mediante CSS avanzado, aplicando efectos de interactividad y sombras dinámicas.</p>
+                </div>
+                <div class="semana-contenido">
+                    <div class="media-frame">
+                        <button class="testpoint" data-anchor="semana-2" type="button">copiar enlace</button>
+                        <video height="100%" controls>
+                            <source src="Grabación 2026-05-07 083527.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </article>
+
+            <article class="semana">
+                <span class="pad"><span>S3</span></span>
+                <div class="semana-info">
+                    <h2 id="semana-3">Semana 3:</h2>
+                    <p>implementacion de la programacion al arduino y del circuito en fisico.</p>
+                </div>
+                <div class="semana-contenido">
+                    <div class="media-frame">
+                        <button class="testpoint" data-anchor="semana-3" type="button">copiar enlace</button>
+                        <video height="100%" controls>
+                            <source src="videoarduinoJO.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </article>
+
+            <article class="semana">
+                <span class="pad"><span>S4</span></span>
+                <div class="semana-info">
+                    <h2 id="semana-4">Semana 4:</h2>
+                    <p>implementacion de luz LED y RGB en arduino y del circuito en fisico.</p>
+                </div>
+                <div class="semana-contenido">
+                    <div class="media-frame">
+                        <button class="testpoint" data-anchor="semana-4" type="button">copiar enlace</button>
+                        <video height="100%" controls>
+                            <source src="WIN_20260709_08_42_18_Pro.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </article>
+
+            <article class="semana">
+                <span class="pad"><span>S5</span></span>
+                <div class="semana-info">
+                    <h2 id="semana-5">Semana 5:</h2>
+                    <p>implementacion de un sensor ultrasonico.</p>
+                </div>
+                <div class="semana-contenido">
+                    <div class="media-frame">
+                        <button class="testpoint" data-anchor="semana-5" type="button">copiar enlace</button>
+                        <video height="100%" controls>
+                            <source src="Ultrasonico.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </article>
+
+            <article class="semana">
+                <span class="pad"><span>S6</span></span>
+                <div class="semana-info">
+                    <h2 id="semana-6">Semana 6:</h2>
+                    <p>implementacion de un sensor PIR.</p>
+                </div>
+                <div class="semana-contenido">
+                    <div class="media-frame">
+                        <button class="testpoint" data-anchor="semana-6" type="button">copiar enlace</button>
+                        <video height="100%" controls>
+                            <source src="PIR.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </article>
+
+            <article class="semana">
+                <span class="pad"><span>S7</span></span>
+                <div class="semana-info">
+                    <h2 id="semana-7">Semana 7:</h2>
+                    <p>Suficiencia.</p>
+                </div>
+                <div class="semana-contenido">
+                    <div class="media-frame">
+                        <button class="testpoint" data-anchor="semana-7" type="button">copiar enlace</button>
+                        <video height="100%" controls>
+                            <source src="Suficiencia.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        <span>@katrolote24</span>
+        <img src="https://www.capouilliez.edu.gt/assets/img/logo.png" alt="Logo Colegio">
+    </footer>
+
+    <div class="toast" id="toast">Enlace copiado</div>
+
+    <script>
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* ---- Reveal on scroll + counter + rail nav sync ---- */
+        const items = document.querySelectorAll('article.semana');
+        const railButtons = document.querySelectorAll('.railnav button');
+        const counter = document.getElementById('counter');
+        const total = items.length;
+
+        function setActive(index) {
+            counter.textContent = 'HOJA ' + String(index + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+            railButtons.forEach((b, i) => b.classList.toggle('is-active', i === index));
+        }
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.15 });
+
+        const activeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const idx = Array.from(items).indexOf(entry.target);
+                    setActive(idx);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        items.forEach(item => {
+            revealObserver.observe(item);
+            activeObserver.observe(item);
+        });
+
+        if (reduceMotion) {
+            items.forEach(el => el.classList.add('is-visible'));
+        }
+
+        railButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = document.getElementById(btn.dataset.target);
+                if (target) target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+            });
+        });
+
+        /* ---- Test point copy-link buttons ---- */
+        const toast = document.getElementById('toast');
+        let toastTimer;
+        document.querySelectorAll('.testpoint').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const url = window.location.href.split('#')[0] + '#' + btn.dataset.anchor;
+                try {
+                    await navigator.clipboard.writeText(url);
+                } catch (e) {
+                    /* clipboard API unavailable, ignore silently */
+                }
+                toast.classList.add('is-shown');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => toast.classList.remove('is-shown'), 1800);
+            });
+        });
+
+        /* ---- Power toggle: more fireflies, brighter glow ---- */
+        const powerToggle = document.getElementById('powerToggle');
+        let energized = false;
+        powerToggle.addEventListener('click', () => {
+            energized = !energized;
+            powerToggle.classList.toggle('is-on', energized);
+            powerToggle.setAttribute('aria-pressed', String(energized));
+        });
+
+        /* ---- Cursor aura ---- */
+        const aura = document.getElementById('cursorAura');
+        if (!reduceMotion && window.matchMedia('(pointer: fine)').matches) {
+            window.addEventListener('mousemove', (e) => {
+                aura.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px)';
+                aura.classList.add('is-active');
+            });
+            window.addEventListener('mouseleave', () => aura.classList.remove('is-active'));
+        }
+
+        /* ---- Animated fireflies background ---- */
+        if (!reduceMotion) {
+            const canvas = document.getElementById('circuit-bg');
+            const ctx = canvas.getContext('2d');
+            let w, h, dpr;
+            let flies = [];
+            const baseCount = 26;
+            const boostCount = 46;
+
+            function resize() {
+                dpr = Math.min(window.devicePixelRatio || 1, 2);
+                w = window.innerWidth;
+                h = window.innerHeight;
+                canvas.width = w * dpr;
+                canvas.height = h * dpr;
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                buildFlies();
+            }
+
+            function makeFly() {
+                const gold = Math.random() > 0.5;
+                return {
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: 1.1 + Math.random() * 1.6,
+                    driftX: (Math.random() - 0.5) * 0.25,
+                    driftY: -0.12 - Math.random() * 0.18,
+                    swayAmp: 10 + Math.random() * 24,
+                    swayFreq: 0.0006 + Math.random() * 0.0009,
+                    phase: Math.random() * Math.PI * 2,
+                    flickerFreq: 0.0015 + Math.random() * 0.002,
+                    color: gold ? '232, 194, 90' : '75, 230, 160'
+                };
+            }
+
+            function buildFlies() {
+                flies = Array.from({ length: baseCount }, makeFly);
+            }
+
+            function draw(t) {
+                ctx.clearRect(0, 0, w, h);
+                const on = powerToggle.classList.contains('is-on');
+                const target = on ? boostCount : baseCount;
+                while (flies.length < target) flies.push(makeFly());
+                if (flies.length > target) flies.length = target;
+
+                flies.forEach(f => {
+                    f.y += f.driftY * (on ? 1.6 : 1);
+                    f.x += f.driftX;
+                    if (f.y < -20) { f.y = h + 20; f.x = Math.random() * w; }
+                    if (f.x < -20) f.x = w + 20;
+                    if (f.x > w + 20) f.x = -20;
+
+                    const sway = Math.sin(t * f.swayFreq + f.phase) * f.swayAmp;
+                    const flicker = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * f.flickerFreq + f.phase));
+                    const alpha = flicker * (on ? 0.95 : 0.7);
+                    const px = f.x + sway;
+
+                    ctx.beginPath();
+                    ctx.fillStyle = 'rgba(' + f.color + ',' + alpha.toFixed(3) + ')';
+                    ctx.shadowColor = 'rgba(' + f.color + ', 0.9)';
+                    ctx.shadowBlur = 10 * flicker + (on ? 4 : 0);
+                    ctx.arc(px, f.y, f.r, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                requestAnimationFrame(draw);
+            }
+
+            window.addEventListener('resize', resize);
+            resize();
+            requestAnimationFrame(draw);
+        }
+    </script>
+</body>
+</html>
